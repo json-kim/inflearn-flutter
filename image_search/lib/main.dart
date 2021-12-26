@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_search/screen/home/home_screen.dart';
+import 'package:image_search/screen/home/home_view_model.dart';
+import 'package:provider/provider.dart';
+
+import 'data/pixabay_api.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +19,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomeScreen(),
+      home: ChangeNotifierProvider(
+        create: (_) => HomeViewModel(repository: PixabayApi()),
+        child: const HomeScreen(),
+      ),
     );
   }
 }
