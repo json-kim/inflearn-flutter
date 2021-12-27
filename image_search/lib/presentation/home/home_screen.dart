@@ -25,6 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<HomeViewModel>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -55,24 +57,19 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            Consumer<HomeViewModel>(
-              builder: (_, viewModel, child) {
-                return Expanded(
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                    ),
-                    itemCount: viewModel.photos.length,
-                    itemBuilder: (context, idx) => PhotoBox(
-                      photo: viewModel.photos[idx],
-                    ),
-                  ),
-                );
-              },
-            ),
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                ),
+                itemCount: viewModel.photos.length,
+                itemBuilder: (context, idx) => PhotoBox(
+                  photo: viewModel.photos[idx],
+                ),
+              ),
+            )
           ],
         ),
       ),

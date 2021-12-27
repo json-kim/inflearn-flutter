@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:image_search/data/pixabay_api.dart';
-import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_search/data/data_source/pixabay_api.dart';
+import 'package:image_search/data/repository/photo_api_repository_impl.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'pixabay_api_test.mocks.dart';
@@ -9,9 +10,8 @@ import 'pixabay_api_test.mocks.dart';
 @GenerateMocks([http.Client])
 void main() {
   test('Pixabay 데이터를 잘 가져와야 한다.', () async {
-    final api = PixabayApi();
-
     final client = MockClient();
+    final api = PhotoApiRepositoryImpl(PixabayApi(client));
 
     // 첫 번째를 실행하면, 두 번째로 응답을 하도록 함
     // MockClient를 만들고 client.get('....') 이 실행되면
@@ -20,7 +20,7 @@ void main() {
             '${PixabayApi.baseUrl}?key=${PixabayApi.apiKey}&q=iphone&image_type=photo')))
         .thenAnswer((_) async => http.Response(fakeJsonBody, 200));
 
-    final result = await api.fetch('iphone', client: client);
+    final result = await api.fetch('iphone');
 
     // 두개의 값이 같은지를 검사
     expect(result.first.id, 620817);
