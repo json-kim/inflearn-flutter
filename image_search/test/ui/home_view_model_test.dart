@@ -12,7 +12,7 @@ void main() {
 
     final result = fakeJson.map((e) => Photo.fromJson(e)).toList();
 
-    expect(viewModel.photos, result);
+    expect(viewModel.state.photos, result);
   });
 }
 
