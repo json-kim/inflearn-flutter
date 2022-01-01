@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:image_search/data/data_source/result.dart';
 import 'package:image_search/domain/model/photo.dart';
 import 'package:image_search/domain/repository/photo_api_repository.dart';
+
+import 'home_ui_event.dart';
 
 class HomeViewModel with ChangeNotifier {
   final PhotoApiRepository repository;
@@ -12,11 +15,22 @@ class HomeViewModel with ChangeNotifier {
 
   UnmodifiableListView<Photo> get photos => UnmodifiableListView(_photos);
 
+  final _eventController = StreamController<HomeUiEvent>();
+  Stream<HomeUiEvent> get eventStream => _eventController.stream;
+
   HomeViewModel({required this.repository});
 
   Future<void> fetch(String query) async {
-    final result = await repository.fetch(query);
-    _photos = result;
-    notifyListeners();
+    final Result<List<Photo>> result = await repository.fetch(query);
+
+    result.when(
+      success: (list) {
+        _photos = list;
+        notifyListeners();
+      },
+      error: (message) {
+        _eventController.add(HomeUiEvent.showSnackBar(message));
+      },
+    );
   }
 }

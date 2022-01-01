@@ -1,7 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_search/data/data_source/pixabay_api.dart';
+import 'package:image_search/data/data_source/result.dart';
 import 'package:image_search/data/repository/photo_api_repository_impl.dart';
+import 'package:image_search/domain/model/photo.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -20,10 +22,10 @@ void main() {
             '${PixabayApi.baseUrl}?key=${PixabayApi.apiKey}&q=iphone&image_type=photo')))
         .thenAnswer((_) async => http.Response(fakeJsonBody, 200));
 
-    final result = await api.fetch('iphone');
+    final Result<List<Photo>> result = await api.fetch('iphone');
 
     // 두개의 값이 같은지를 검사
-    expect(result.first.id, 620817);
+    expect((result as Success<List<Photo>>).data.first.id, 620817);
 
     // verify 안의 코드가 실제로 동작을 했는지 검사
     verify(client.get(Uri.parse(

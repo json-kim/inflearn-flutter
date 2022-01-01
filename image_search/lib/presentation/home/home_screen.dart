@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,9 +18,25 @@ class _HomeScreenState extends State<HomeScreen> {
   // 인스턴스 생성을 클래스 안에서 하는건 피하고 외부에서 생성를 한 뒤 받아서 사용하는게 바람직하다
 
   final _controller = TextEditingController();
+  StreamSubscription? _subscription;
+
+  @override
+  void initState() {
+    final viewModel = context.read<HomeViewModel>();
+    _subscription = viewModel.eventStream.listen((event) {
+      event.when(showSnackBar: (message) {
+        final snackBar = SnackBar(content: Text(message));
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(snackBar);
+      });
+    });
+    super.initState();
+  }
 
   @override
   void dispose() {
+    _subscription?.cancel();
     _controller.dispose();
     super.dispose();
   }
